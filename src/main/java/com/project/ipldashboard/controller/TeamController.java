@@ -1,6 +1,7 @@
 package com.project.ipldashboard.controller;
 
 import com.project.ipldashboard.model.Team;
+import com.project.ipldashboard.repository.MatchRepository;
 import com.project.ipldashboard.repository.TeamRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +14,14 @@ public class TeamController {
 
     @Autowired
     TeamRepository teamRepository;
+    @Autowired MatchRepository matchRepository;
     
 
     @GetMapping("/team/{teamName}")
     public Team getTeam(@PathVariable String teamName) {
-        
-        return teamRepository.findByTeamName(teamName);
+        Team team = teamRepository.findByTeamName(teamName);
+        team.setMatches(matchRepository.findTop3ByTeam1OrTeam2OrderByDateDesc(teamName, teamName));
+        return team;
     }
 
     
